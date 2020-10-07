@@ -6,6 +6,7 @@ import { HelloResolver } from './resolvers/Hello';
 import { createConnection } from 'typeorm';
 import path from 'path';
 import { User } from './entities/User';
+import { UserResolver } from './resolvers/User';
 
 const app = express();
 
@@ -21,7 +22,7 @@ const main = async () => {
   await conn.runMigrations();
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [HelloResolver],
+      resolvers: [HelloResolver, UserResolver],
       validate: false
     }),
     context: ({ req, res }) => ({ req, res })
