@@ -1,6 +1,7 @@
 import { User } from '../entities/User';
 import { Arg, Mutation, Resolver } from 'type-graphql';
 import { getConnection } from 'typeorm';
+import { userValidator } from '../validators/userValidator';
 
 @Resolver()
 export class UserResolver {
@@ -13,6 +14,15 @@ export class UserResolver {
     @Arg('dateOfBirth', () => String, { nullable: true }) dateOfBirth: string,
     @Arg('gender', () => String, { nullable: true }) gender: string
   ): Promise<User> {
+    try {
+      await userValidator().validate({
+        username,
+        email,
+        password
+      });
+    } catch (e) {
+      console.log(e);
+    }
     const result = await getConnection()
       .createQueryBuilder()
       .insert()
