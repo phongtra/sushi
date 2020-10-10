@@ -7,7 +7,6 @@ import { createConnection } from 'typeorm';
 import path from 'path';
 import { User } from './entities/User';
 import { UserResolver } from './resolvers/User';
-import { userValidator } from './validators/userValidator';
 
 const app = express();
 
@@ -32,18 +31,6 @@ const main = async () => {
   app.listen(4000, () => {
     console.log('Listening on port 4000');
   });
-  try {
-    const validator = await userValidator().validate(
-      {
-        username: 'AB',
-        email: 'emaill.com',
-        password: '123abcA!'
-      },
-      { abortEarly: false }
-    );
-  } catch (e) {
-    console.log(e);
-  }
 };
 
 main();

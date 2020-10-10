@@ -3,7 +3,7 @@ import { Field, ObjectType } from 'type-graphql';
 import { FieldError } from './FieldError';
 
 @ObjectType()
-class UserResponse {
+export class UserResponse {
   @Field(() => [FieldError], { nullable: true })
   errors?: FieldError[];
   @Field(() => User, { nullable: true })
