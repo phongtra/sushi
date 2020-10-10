@@ -64,4 +64,31 @@ export class UserResolver {
     const user = result.raw[0] as User;
     return { user };
   }
+  @Mutation(() => UserResponse)
+  async signin(
+    @Arg('usernameOrEmail', () => String) usernameOrEmail: string,
+    @Arg('password', () => String) password: string
+  ): Promise<UserResponse> {
+    const user = await User.findOne(
+      usernameOrEmail.includes('@')
+        ? { email: usernameOrEmail }
+        : { username: usernameOrEmail }
+    );
+    if (!user) {
+      return {
+        errors: [
+          { field: 'password', message: "user doesn't exist or wrong password" }
+        ]
+      };
+    }
+    const valid = await argon2.verify(user.password, password);
+    if (!valid) {
+      return {
+        errors: [
+          { field: 'password', message: "user doesn't exist or wrong password" }
+        ]
+      };
+    }
+    return { user };
+  }
 }
