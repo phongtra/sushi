@@ -1,13 +1,35 @@
 import { User } from '../entities/User';
-import { Arg, Mutation, Resolver } from 'type-graphql';
+import { Arg, Ctx, Mutation, Query, Resolver } from 'type-graphql';
 import { getConnection } from 'typeorm';
 import { userValidator } from '../validators/userValidator';
 import { UserResponse } from './objectTypes/UserResponse';
 import { FieldError } from './objectTypes/FieldError';
 import argon2 from 'argon2';
+import { Context } from '../types';
 
 @Resolver()
 export class UserResolver {
+  @Query(() => User, { nullable: true })
+  me(@Ctx() { req }: Context) {
+    if (!req.session.userId) {
+      return null;
+    }
+    return User.findOne({ id: req.session.userId });
+  }
+  @Mutation(() => Boolean)
+  logout(@Ctx() { req, res }: Context) {
+    return new Promise<Boolean>((resolve) =>
+      req.session.destroy((err) => {
+        res.clearCookie('qid');
+        if (err) {
+          resolve(false);
+          return;
+        }
+        resolve(true);
+      })
+    );
+  }
+
   @Mutation(() => UserResponse)
   async signUp(
     @Arg('username', () => String) username: string,
@@ -16,7 +38,8 @@ export class UserResolver {
     @Arg('name', () => String, { nullable: true }) name: string,
     @Arg('dateOfBirth', () => String, { nullable: true }) dateOfBirth: string,
     @Arg('gender', () => String, { nullable: true })
-    gender: 'male' | 'female' | 'other'
+    gender: 'male' | 'female' | 'other',
+    @Ctx() { req }: Context
   ): Promise<UserResponse> {
     const errors: FieldError[] = [];
     try {
@@ -62,12 +85,14 @@ export class UserResolver {
       .returning('*')
       .execute();
     const user = result.raw[0] as User;
+    req.session.userId = user.id;
     return { user };
   }
   @Mutation(() => UserResponse)
   async signin(
     @Arg('usernameOrEmail', () => String) usernameOrEmail: string,
-    @Arg('password', () => String) password: string
+    @Arg('password', () => String) password: string,
+    @Ctx() { req }: Context
   ): Promise<UserResponse> {
     const user = await User.findOne(
       usernameOrEmail.includes('@')
@@ -89,6 +114,7 @@ export class UserResolver {
         ]
       };
     }
+    req.session.userId = user.id;
     return { user };
   }
 }
