@@ -6,9 +6,79 @@ import { UserResponse } from './objectTypes/UserResponse';
 import { FieldError } from './objectTypes/FieldError';
 import argon2 from 'argon2';
 import { Context } from '../types';
+import { v4 } from 'uuid';
+import { sendEmail } from '../utils/sendEmail';
+import { passwordValidator } from '../validators/passwordValidator';
 
 @Resolver()
 export class UserResolver {
+  @Mutation(() => Boolean)
+  async forgotPassword(
+    @Arg('email', () => String) email: string,
+    @Ctx() { redis }: Context
+  ) {
+    const user = await User.findOne({ email });
+    if (!user) {
+      return true;
+    }
+    const token = v4();
+    await redis.set(
+      'forgot-password' + token,
+      user.id,
+      'ex',
+      1000 * 60 * 60 * 24 * 3
+    );
+    sendEmail(email, `http://localhost:3000/change-password/${token}`);
+    return true;
+  }
+  @Mutation(() => UserResponse)
+  async changePassword(
+    @Arg('token') token: string,
+    @Arg('newPassword') newPassword: string,
+    @Ctx() { redis, req }: Context
+  ): Promise<UserResponse> {
+    try {
+      await passwordValidator().validate(
+        {
+          password: newPassword
+        },
+        { abortEarly: false }
+      );
+    } catch (e) {
+      const errorsForm: FieldError[] = [];
+      e.inner.forEach((error: any) => {
+        errorsForm.push({ field: error.path, message: error.errors[0] });
+      });
+      return { errors: errorsForm };
+    }
+    const key = 'forgot-password' + token;
+    const userId = await redis.get(key);
+    if (!userId) {
+      return {
+        errors: [
+          {
+            field: 'token',
+            message: 'invalid token or token expired'
+          }
+        ]
+      };
+    }
+    const userIdNum = parseInt(userId);
+    const user = await User.findOne(userIdNum);
+    if (!user) {
+      return {
+        errors: [{ field: 'token', message: 'user is no longer exist' }]
+      };
+    }
+    await User.update(
+      { id: userIdNum },
+      { password: await argon2.hash(newPassword) }
+    );
+    redis.del(key);
+    //log user in adter they changed password
+    req.session.userId = user.id;
+    return { user };
+  }
   @Query(() => User, { nullable: true })
   me(@Ctx() { req }: Context) {
     if (!req.session.userId) {
