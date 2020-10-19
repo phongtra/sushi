@@ -4,9 +4,11 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn
 } from 'typeorm';
+import { Recipe } from './Recipe';
 
 @ObjectType()
 @Entity()
@@ -33,6 +35,9 @@ export class User extends BaseEntity {
 
   @Column()
   password!: string;
+
+  @OneToMany(() => Recipe, (recipe) => recipe.user)
+  recipes: Recipe[]
 
   @Field(() => String, { nullable: true })
   @Column({ nullable: true })

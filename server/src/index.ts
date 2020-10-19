@@ -5,12 +5,13 @@ import { buildSchema } from 'type-graphql';
 import { HelloResolver } from './resolvers/Hello';
 import { createConnection } from 'typeorm';
 import path from 'path';
-import { User } from './entities/User';
 import { UserResolver } from './resolvers/User';
 import connectRedis from 'connect-redis';
 import Redis from 'ioredis';
 import session from 'express-session';
 import { __prod__ } from './utils/__prod';
+import { User } from './entities/User';
+import { Recipe } from './entities/Recipe';
 
 const app = express();
 
@@ -21,8 +22,9 @@ const main = async () => {
     logging: true,
     synchronize: true,
     migrations: [path.join(__dirname, './migrations/*')],
-    entities: [User]
+    entities: [Recipe, User]
   });
+
   await conn.runMigrations();
   const RedisStore = connectRedis(session);
   const redis = new Redis();
