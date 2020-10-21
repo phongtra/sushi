@@ -1,37 +1,46 @@
-import { Field } from 'type-graphql';
-import { BaseEntity, Column, CreateDateColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Field, ObjectType } from 'type-graphql';
+import {
+  BaseEntity,
+  Column,
+  CreateDateColumn,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn
+} from 'typeorm';
 import { User } from './User';
 
+@Entity()
+@ObjectType()
 export class Recipe extends BaseEntity {
-    @PrimaryGeneratedColumn()
-    @Field()
-    id!: number;
+  @PrimaryGeneratedColumn()
+  @Field()
+  id!: number;
 
-    @Column()
-    @Field()
-    name!: string
+  @Column()
+  @Field()
+  name!: string;
 
-    @ManyToOne(() => User, (user) => user.recipes)
-    @Field(() => User)
-    user: User
+  @Column('text', { array: true })
+  @Field(() => [String])
+  ingredients!: string[];
 
-    @Column()
-    @Field()
-    userId: number
+  @CreateDateColumn()
+  @Field(() => String)
+  createdAt!: Date;
 
-    @Column()
-    @Field(() => [String])
-    ingredients!: string[]
+  @UpdateDateColumn()
+  @Field(() => String)
+  updatedAt!: Date;
 
-    @CreateDateColumn()
-    @Field(() => String)
-    createdAt!: Date
+  @Column('text', { array: true })
+  @Field(() => [String])
+  procedures!: string[];
+  @Column()
+  @Field()
+  chefId: number;
 
-    @UpdateDateColumn()
-    @Field(() => String)
-    updatedAt!: Date
-
-    @Column()
-    @Field(() => [String])
-    procedures!: string[]
+  @ManyToOne(() => User, (user) => user.recipes)
+  @Field(() => User)
+  chef: User;
 }

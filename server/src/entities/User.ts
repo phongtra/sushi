@@ -36,9 +36,6 @@ export class User extends BaseEntity {
   @Column()
   password!: string;
 
-  @OneToMany(() => Recipe, (recipe) => recipe.user)
-  recipes: Recipe[]
-
   @Field(() => String, { nullable: true })
   @Column({ nullable: true })
   name: string;
@@ -50,4 +47,6 @@ export class User extends BaseEntity {
   @Field(() => String, { nullable: true })
   @Column({ nullable: true })
   gender: string;
+  @OneToMany(() => Recipe, (recipe) => recipe.chef)
+  recipes: Recipe[];
 }

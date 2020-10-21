@@ -10,8 +10,8 @@ import connectRedis from 'connect-redis';
 import Redis from 'ioredis';
 import session from 'express-session';
 import { __prod__ } from './utils/__prod';
-import { User } from './entities/User';
 import { Recipe } from './entities/Recipe';
+import { User } from './entities/User';
 
 const app = express();
 
@@ -20,7 +20,7 @@ const main = async () => {
     type: 'postgres',
     url: 'postgresql://postgres:2606@localhost:5432/sushi',
     logging: true,
-    synchronize: true,
+    synchronize: false,
     migrations: [path.join(__dirname, './migrations/*')],
     entities: [Recipe, User]
   });
