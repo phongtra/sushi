@@ -14,6 +14,7 @@ import { Recipe } from './entities/Recipe';
 import { User } from './entities/User';
 import { RecipeResolver } from './resolvers/Recipe';
 import { Vote } from './entities/Vote';
+import { VoteResolver } from './resolvers/Vote';
 
 const app = express();
 
@@ -22,7 +23,7 @@ const main = async () => {
     type: 'postgres',
     url: 'postgresql://postgres:2606@localhost:5432/sushi',
     logging: true,
-    synchronize: true,
+    synchronize: false,
     migrations: [path.join(__dirname, './migrations/*')],
     entities: [Recipe, User, Vote]
   });
@@ -51,7 +52,7 @@ const main = async () => {
   );
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [HelloResolver, UserResolver, RecipeResolver],
+      resolvers: [HelloResolver, UserResolver, RecipeResolver, VoteResolver],
       validate: false
     }),
     context: ({ req, res }) => ({ req, res, redis })

@@ -14,6 +14,4 @@ export class Vote extends BaseEntity {
   userId: number;
   @PrimaryColumn()
   recipeId: number;
-  @Column({ type: 'int' })
-  value: number;
 }

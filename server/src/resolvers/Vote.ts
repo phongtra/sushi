@@ -2,6 +2,7 @@ import { Context } from '../types';
 import { Arg, Ctx, Int, Mutation, Resolver, UseMiddleware } from 'type-graphql';
 import { Vote } from '../entities/Vote';
 import { isAuth } from '../middlewares/isAuth';
+import { getConnection } from 'typeorm';
 
 @Resolver()
 export class VoteResolver {
@@ -18,7 +19,19 @@ export class VoteResolver {
     if (existingVote) {
       return false;
     }
-    await Vote.create({ recipeId, userId: req.session.userId }).save();
+    await getConnection().transaction(async (tm) => {
+      await tm.query(
+        `insert into vote ("recipeId", "userId")
+            values ($1, $2)`,
+        [recipeId, req.session.userId]
+      );
+      await tm.query(
+        `update recipe
+          set "voteCount" = "voteCount" + 1
+          where id = $1`,
+        [recipeId]
+      );
+    });
     return true;
   }
 }

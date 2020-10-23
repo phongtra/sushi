@@ -46,6 +46,7 @@ export class Recipe extends BaseEntity {
   @Field(() => User)
   chef: User;
   @Field()
+  @Column({ default: 0 })
   voteCount: number;
   @OneToMany(() => Vote, (vote) => vote.recipe)
   votes: Vote[];
