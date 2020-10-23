@@ -12,6 +12,7 @@ import session from 'express-session';
 import { __prod__ } from './utils/__prod';
 import { Recipe } from './entities/Recipe';
 import { User } from './entities/User';
+import { RecipeResolver } from './resolvers/Recipe';
 
 const app = express();
 
@@ -49,7 +50,7 @@ const main = async () => {
   );
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [HelloResolver, UserResolver],
+      resolvers: [HelloResolver, UserResolver, RecipeResolver],
       validate: false
     }),
     context: ({ req, res }) => ({ req, res, redis })
