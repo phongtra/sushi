@@ -22,7 +22,7 @@ const main = async () => {
     type: 'postgres',
     url: 'postgresql://postgres:2606@localhost:5432/sushi',
     logging: true,
-    synchronize: false,
+    synchronize: true,
     migrations: [path.join(__dirname, './migrations/*')],
     entities: [Recipe, User, Vote]
   });

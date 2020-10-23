@@ -20,6 +20,8 @@ export class RecipeResolver {
       .getRepository(Recipe)
       .createQueryBuilder('r')
       .innerJoinAndSelect('r.chef', 'user', 'user.id = r."chefId"')
+      .innerJoinAndSelect('r.votes', 'vote', 'vote."recipeId" = r.id')
+      .addSelect('count(r.votes) as voteCount')
       .orderBy('r."createdAt"', 'DESC');
     const recipes = qb.getMany();
     return recipes;
@@ -30,6 +32,8 @@ export class RecipeResolver {
       .getRepository(Recipe)
       .createQueryBuilder('r')
       .where('r.id = :id', { id })
+      .innerJoinAndSelect('r.votes', 'vote', 'vote."recipeId" = r.id')
+      .addSelect('count(r.votes) as voteCount')
       .innerJoinAndSelect('r.chef', 'user', 'user.id = r."chefId"');
     const recipe = qb.getOne();
     return recipe;
