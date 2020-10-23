@@ -13,6 +13,7 @@ import { __prod__ } from './utils/__prod';
 import { Recipe } from './entities/Recipe';
 import { User } from './entities/User';
 import { RecipeResolver } from './resolvers/Recipe';
+import { Vote } from './entities/Vote';
 
 const app = express();
 
@@ -23,7 +24,7 @@ const main = async () => {
     logging: true,
     synchronize: false,
     migrations: [path.join(__dirname, './migrations/*')],
-    entities: [Recipe, User]
+    entities: [Recipe, User, Vote]
   });
 
   await conn.runMigrations();

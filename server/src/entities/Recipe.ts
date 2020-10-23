@@ -5,10 +5,12 @@ import {
   CreateDateColumn,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn
 } from 'typeorm';
 import { User } from './User';
+import { Vote } from './Vote';
 
 @Entity()
 @ObjectType()
@@ -43,4 +45,6 @@ export class Recipe extends BaseEntity {
   @ManyToOne(() => User, (user) => user.recipes)
   @Field(() => User)
   chef: User;
+  @OneToMany(() => Vote, (vote) => vote.recipe)
+  votes: Vote[];
 }

@@ -9,6 +9,7 @@ import {
   UpdateDateColumn
 } from 'typeorm';
 import { Recipe } from './Recipe';
+import { Vote } from './Vote';
 
 @ObjectType()
 @Entity()
@@ -49,4 +50,6 @@ export class User extends BaseEntity {
   gender: string;
   @OneToMany(() => Recipe, (recipe) => recipe.chef)
   recipes: Recipe[];
+  @OneToMany(() => Vote, (vote) => vote.user)
+  votes: Vote[];
 }
