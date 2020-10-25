@@ -8,6 +8,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn
 } from 'typeorm';
+import { Comment } from './Comment';
 import { Recipe } from './Recipe';
 import { Vote } from './Vote';
 
@@ -52,4 +53,6 @@ export class User extends BaseEntity {
   recipes: Recipe[];
   @OneToMany(() => Vote, (vote) => vote.user)
   votes: Vote[];
+  @OneToMany(() => Comment, (comment) => comment.user)
+  comments: Comment[];
 }

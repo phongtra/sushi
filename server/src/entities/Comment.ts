@@ -5,13 +5,13 @@ import { User } from './User';
 
 @Entity()
 @ObjectType()
-export class Vote extends BaseEntity {
-  @ManyToOne(() => User, (user) => user.votes)
-  user: User;
-  @ManyToOne(() => Recipe, (recipe) => recipe.votes, { onDelete: 'CASCADE' })
+export class Comment extends BaseEntity {
+  @ManyToOne(() => Recipe, (recipe) => recipe.comments, { onDelete: 'CASCADE' })
   recipe: Recipe;
   @PrimaryColumn()
-  userId: number;
-  @PrimaryColumn()
   recipeId: number;
+  @ManyToOne(() => User, (user) => user.comments)
+  user: User;
+  @PrimaryColumn()
+  userId: number;
 }

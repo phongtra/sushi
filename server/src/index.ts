@@ -15,6 +15,7 @@ import { User } from './entities/User';
 import { RecipeResolver } from './resolvers/Recipe';
 import { Vote } from './entities/Vote';
 import { VoteResolver } from './resolvers/Vote';
+import { Comment } from './entities/Comment';
 
 const app = express();
 
@@ -25,7 +26,7 @@ const main = async () => {
     logging: true,
     synchronize: false,
     migrations: [path.join(__dirname, './migrations/*')],
-    entities: [Recipe, User, Vote]
+    entities: [Recipe, User, Vote, Comment]
   });
 
   await conn.runMigrations();

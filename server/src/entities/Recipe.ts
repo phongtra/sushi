@@ -9,6 +9,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn
 } from 'typeorm';
+import { Comment } from './Comment';
 import { User } from './User';
 import { Vote } from './Vote';
 
@@ -50,4 +51,6 @@ export class Recipe extends BaseEntity {
   voteCount: number;
   @OneToMany(() => Vote, (vote) => vote.recipe)
   votes: Vote[];
+  @OneToMany(() => Comment, (comment) => comment.recipe)
+  comments: Comment[];
 }
