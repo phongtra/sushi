@@ -23,8 +23,7 @@ const app = express();
 const main = async () => {
   const conn = await createConnection({
     type: 'postgres',
-    url:
-      'postgresql://doadmin:p1vno4h1d66axeqh@db-postgresql-fra1-80683-do-user-7422227-0.a.db.ondigitalocean.com:25060/defaultdb',
+    url: 'postgresql://postgres:2606@localhost:5432/sushi',
     logging: true,
     synchronize: false,
     migrations: [path.join(__dirname, './migrations/*')],
