@@ -16,6 +16,7 @@ import { RecipeResolver } from './resolvers/Recipe';
 import { Vote } from './entities/Vote';
 import { VoteResolver } from './resolvers/Vote';
 import { Comment } from './entities/Comment';
+import { CommentResolver } from './resolvers/Comment';
 
 const app = express();
 
@@ -53,7 +54,13 @@ const main = async () => {
   );
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [HelloResolver, UserResolver, RecipeResolver, VoteResolver],
+      resolvers: [
+        HelloResolver,
+        UserResolver,
+        RecipeResolver,
+        VoteResolver,
+        CommentResolver
+      ],
       validate: false
     }),
     context: ({ req, res }) => ({ req, res, redis })

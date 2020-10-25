@@ -1,5 +1,5 @@
-import { ObjectType } from 'type-graphql';
-import { BaseEntity, Entity, ManyToOne, PrimaryColumn } from 'typeorm';
+import { Field, ObjectType } from 'type-graphql';
+import { BaseEntity, Column, Entity, ManyToOne, PrimaryColumn } from 'typeorm';
 import { Recipe } from './Recipe';
 import { User } from './User';
 
@@ -14,4 +14,10 @@ export class Comment extends BaseEntity {
   user: User;
   @PrimaryColumn()
   userId: number;
+  @Column()
+  @Field()
+  username: string;
+  @Column()
+  @Field()
+  content: string;
 }

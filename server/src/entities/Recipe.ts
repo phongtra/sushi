@@ -52,5 +52,6 @@ export class Recipe extends BaseEntity {
   @OneToMany(() => Vote, (vote) => vote.recipe)
   votes: Vote[];
   @OneToMany(() => Comment, (comment) => comment.recipe)
+  @Field(() => [Comment])
   comments: Comment[];
 }

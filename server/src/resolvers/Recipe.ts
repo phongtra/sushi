@@ -20,6 +20,7 @@ export class RecipeResolver {
       .getRepository(Recipe)
       .createQueryBuilder('r')
       .innerJoinAndSelect('r.chef', 'user', 'user.id = r."chefId"')
+      .leftJoinAndSelect('r.comments', 'comment', 'comment."recipeId" = r.id')
       .orderBy('r."createdAt"', 'DESC');
     const recipes = qb.getMany();
     return recipes;
