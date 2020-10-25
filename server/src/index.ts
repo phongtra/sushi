@@ -5,12 +5,18 @@ import { buildSchema } from 'type-graphql';
 import { HelloResolver } from './resolvers/Hello';
 import { createConnection } from 'typeorm';
 import path from 'path';
-import { User } from './entities/User';
 import { UserResolver } from './resolvers/User';
 import connectRedis from 'connect-redis';
 import Redis from 'ioredis';
 import session from 'express-session';
 import { __prod__ } from './utils/__prod';
+import { Recipe } from './entities/Recipe';
+import { User } from './entities/User';
+import { RecipeResolver } from './resolvers/Recipe';
+import { Vote } from './entities/Vote';
+import { VoteResolver } from './resolvers/Vote';
+import { Comment } from './entities/Comment';
+import { CommentResolver } from './resolvers/Comment';
 
 const app = express();
 
@@ -19,10 +25,11 @@ const main = async () => {
     type: 'postgres',
     url: 'postgresql://postgres:2606@localhost:5432/sushi',
     logging: true,
-    synchronize: true,
+    synchronize: false,
     migrations: [path.join(__dirname, './migrations/*')],
-    entities: [User]
+    entities: [Recipe, User, Vote, Comment]
   });
+
   await conn.runMigrations();
   const RedisStore = connectRedis(session);
   const redis = new Redis();
@@ -47,7 +54,13 @@ const main = async () => {
   );
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [HelloResolver, UserResolver],
+      resolvers: [
+        HelloResolver,
+        UserResolver,
+        RecipeResolver,
+        VoteResolver,
+        CommentResolver
+      ],
       validate: false
     }),
     context: ({ req, res }) => ({ req, res, redis })

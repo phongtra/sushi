@@ -4,9 +4,13 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn
 } from 'typeorm';
+import { Comment } from './Comment';
+import { Recipe } from './Recipe';
+import { Vote } from './Vote';
 
 @ObjectType()
 @Entity()
@@ -45,4 +49,10 @@ export class User extends BaseEntity {
   @Field(() => String, { nullable: true })
   @Column({ nullable: true })
   gender: string;
+  @OneToMany(() => Recipe, (recipe) => recipe.chef)
+  recipes: Recipe[];
+  @OneToMany(() => Vote, (vote) => vote.user)
+  votes: Vote[];
+  @OneToMany(() => Comment, (comment) => comment.user)
+  comments: Comment[];
 }
