@@ -10,17 +10,27 @@ import {
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { Login } from './Login';
+import { Register } from './Register';
 
 export const NavBar: React.FC = () => {
   const router = useRouter();
   let body = null;
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    isOpen: isLoginOpen,
+    onOpen: onLoginOpen,
+    onClose: onLoginClose
+  } = useDisclosure();
+  const {
+    isOpen: isRegisterOpen,
+    onOpen: onRegisterOpen,
+    onClose: onRegisterClose
+  } = useDisclosure();
   body = (
     <>
-      <Button onClick={onOpen}>Login</Button>
-      <NextLink href='/register'>
-        <Link>Register</Link>
-      </NextLink>
+      <Button onClick={onLoginOpen} mr={4}>
+        Login
+      </Button>
+      <Button onClick={onRegisterOpen}>Register</Button>
     </>
   );
   return (
@@ -32,7 +42,8 @@ export const NavBar: React.FC = () => {
           </Link>
         </NextLink>
         <Box ml='auto'>{body}</Box>
-        <Login isOpen={isOpen} onClose={onClose} />
+        <Login isOpen={isLoginOpen} onClose={onLoginClose} />
+        <Register isOpen={isRegisterOpen} onClose={onRegisterClose} />
       </Flex>
     </Flex>
   );

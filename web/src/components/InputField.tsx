@@ -13,11 +13,13 @@ type InputFieldProps = InputHTMLAttributes<HTMLInputElement> & {
   label: string;
   placeholder: string;
   textarea?: Boolean;
+  important?: Boolean;
 };
 
 export const InputField: React.FC<InputFieldProps> = ({
   size: _,
   textarea = false,
+  important = false,
   ...props
 }) => {
   let InputOrTextarea = Input;
@@ -27,7 +29,10 @@ export const InputField: React.FC<InputFieldProps> = ({
   const [field, { error }] = useField(props);
   return (
     <FormControl isInvalid={!!error}>
-      <FormLabel htmlFor={field.name}>{props.label}</FormLabel>
+      <FormLabel htmlFor={field.name}>
+        {important ? <span style={{ color: 'red' }}>* </span> : ''}
+        {props.label}
+      </FormLabel>
       <InputOrTextarea
         {...props}
         {...field}

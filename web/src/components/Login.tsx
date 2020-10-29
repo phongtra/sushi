@@ -12,11 +12,10 @@ import {
 import { Form, Formik } from 'formik';
 import React from 'react';
 import { InputField } from './InputField';
+import { ModalProps } from './interface/ModalInterface';
 
-interface LoginProps {
-  isOpen: boolean;
-  onClose: () => void;
-}
+interface LoginProps extends ModalProps {}
+
 interface FormValues {
   usernameOrEmail: string;
   password: string;
@@ -27,7 +26,7 @@ export const Login: React.FC<LoginProps> = ({ isOpen, onClose }) => {
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Modal Title</ModalHeader>
+        <ModalHeader>Login</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <Formik
