@@ -5,31 +5,73 @@ import {
   ModalHeader,
   ModalCloseButton,
   ModalBody,
-  ModalFooter,
-  Button
+  Button,
+  FormControl,
+  Box
 } from '@chakra-ui/core';
+import { Form, Formik } from 'formik';
 import React from 'react';
+import { InputField } from './InputField';
 
 interface LoginProps {
   isOpen: boolean;
   onClose: () => void;
 }
-
+interface FormValues {
+  usernameOrEmail: string;
+  password: string;
+}
 export const Login: React.FC<LoginProps> = ({ isOpen, onClose }) => {
+  const initialValues: FormValues = { usernameOrEmail: '', password: '' };
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Modal Title</ModalHeader>
         <ModalCloseButton />
-        <ModalBody>hello</ModalBody>
-
-        <ModalFooter>
-          <Button variantColor='blue' mr={3} onClick={onClose}>
-            Close
-          </Button>
-          <Button variant='ghost'>Secondary Action</Button>
-        </ModalFooter>
+        <ModalBody>
+          <Formik
+            initialValues={initialValues}
+            onSubmit={(values) => {
+              console.log(values);
+            }}
+          >
+            {({ isSubmitting }) => (
+              <Form>
+                <FormControl>
+                  <InputField
+                    name='usernameOrEmail'
+                    placeholder='Username or Email'
+                    label='Username or Email'
+                  />
+                  <Box mt={4}>
+                    <InputField
+                      name='password'
+                      placeholder='Password'
+                      label='Password'
+                      type='password'
+                    />
+                  </Box>
+                  {/* <Flex mt={2}>
+                     <NextLink href='/forget-password'>
+                       <Link ml='auto'>forgot password</Link>
+                     </NextLink>
+                   </Flex>
+      */}
+                  <Button
+                    type='submit'
+                    variantColor='teal'
+                    mt={4}
+                    isLoading={isSubmitting}
+                  >
+                    Login
+                  </Button>
+                  {/* <FormErrorMessage>{form.errors.name}</FormErrorMessage> */}
+                </FormControl>
+              </Form>
+            )}
+          </Formik>
+        </ModalBody>
       </ModalContent>
     </Modal>
   );
