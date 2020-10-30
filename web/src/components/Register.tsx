@@ -103,7 +103,6 @@ export const Register: React.FC<RegisterProps> = ({ isOpen, onClose }) => {
                   </Box>
                   <Box mt={4}>
                     <Field as={Select} placeholder='Gender' name='gender'>
-                      <option value=''></option>
                       <option value='male'>Male</option>
                       <option value='female'>Female</option>
                       <option value='other'>Other</option>
