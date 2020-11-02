@@ -12,6 +12,7 @@ import {
 } from '@chakra-ui/core';
 import { Field, Form, Formik } from 'formik';
 import React from 'react';
+import { MeDocument, MeQuery, useSignupMutation } from '../generated/graphql';
 import { InputField } from './InputField';
 import { ModalProps } from './interface/ModalInterface';
 
@@ -34,6 +35,7 @@ interface FormValues {
   gender?: Gender;
 }
 export const Register: React.FC<RegisterProps> = ({ isOpen, onClose }) => {
+  const [signup] = useSignupMutation();
   const initialValues: FormValues = {
     username: '',
     email: '',
@@ -52,8 +54,27 @@ export const Register: React.FC<RegisterProps> = ({ isOpen, onClose }) => {
         <ModalBody>
           <Formik
             initialValues={initialValues}
-            onSubmit={(values) => {
-              console.log(values);
+            onSubmit={async (values) => {
+              await signup({
+                variables: {
+                  username: values.username,
+                  email: values.email,
+                  password: values.password,
+                  name: values.name && values.name,
+                  dateOfBirth: values.dateOfBirth && values.dateOfBirth,
+                  gender: values.gender && values.gender
+                },
+                update: (caches, { data }) => {
+                  caches.writeQuery<MeQuery>({
+                    query: MeDocument,
+                    data: {
+                      __typename: 'Query',
+                      me: data.signUp.user
+                    }
+                  });
+                }
+              });
+              onClose();
             }}
           >
             {({ isSubmitting }) => (
