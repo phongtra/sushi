@@ -11,9 +11,13 @@ import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { Login } from './Login';
 import { Register } from './Register';
+import { useMeQuery } from '../generated/graphql';
 
 export const NavBar: React.FC = () => {
   const router = useRouter();
+  const { data, loading, error } = useMeQuery({
+    skip: typeof window === 'undefined'
+  });
   let body = null;
   const {
     isOpen: isLoginOpen,
@@ -39,6 +43,7 @@ export const NavBar: React.FC = () => {
         <NextLink href='/'>
           <Link>
             <Heading>Sushi</Heading>
+            {data?.me?.username && <div>{data.me.username}</div>}
           </Link>
         </NextLink>
         <Box ml='auto'>{body}</Box>

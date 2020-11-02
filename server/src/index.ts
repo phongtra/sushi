@@ -17,6 +17,7 @@ import { Vote } from './entities/Vote';
 import { VoteResolver } from './resolvers/Vote';
 import { Comment } from './entities/Comment';
 import { CommentResolver } from './resolvers/Comment';
+import cors from 'cors';
 
 const app = express();
 
@@ -33,6 +34,8 @@ const main = async () => {
   await conn.runMigrations();
   const RedisStore = connectRedis(session);
   const redis = new Redis();
+  app.set('proxy', 1);
+  app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
   app.use(
     session({
       name: 'qid',

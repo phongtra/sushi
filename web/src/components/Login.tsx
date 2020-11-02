@@ -1,3 +1,4 @@
+import { useApolloClient } from '@apollo/client';
 import {
   Modal,
   ModalOverlay,
@@ -11,6 +12,7 @@ import {
 } from '@chakra-ui/core';
 import { Form, Formik } from 'formik';
 import React from 'react';
+import { MeDocument, MeQuery, useLoginMutation } from '../generated/graphql';
 import { InputField } from './InputField';
 import { ModalProps } from './interface/ModalInterface';
 
@@ -21,7 +23,9 @@ interface FormValues {
   password: string;
 }
 export const Login: React.FC<LoginProps> = ({ isOpen, onClose }) => {
+  const apolloClient = useApolloClient();
   const initialValues: FormValues = { usernameOrEmail: '', password: '' };
+  const [login, { loading }] = useLoginMutation();
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
@@ -31,8 +35,22 @@ export const Login: React.FC<LoginProps> = ({ isOpen, onClose }) => {
         <ModalBody>
           <Formik
             initialValues={initialValues}
-            onSubmit={(values) => {
-              console.log(values);
+            onSubmit={async ({ usernameOrEmail, password }) => {
+              console.log('submitting');
+              await login({
+                variables: { usernameOrEmail, password },
+                update: (caches, { data }) => {
+                  caches.writeQuery<MeQuery>({
+                    query: MeDocument,
+                    data: {
+                      __typename: 'Query',
+                      me: data.signin.user
+                    }
+                  });
+                }
+              });
+              // await apolloClient.resetStore();
+              onClose();
             }}
           >
             {({ isSubmitting }) => (
