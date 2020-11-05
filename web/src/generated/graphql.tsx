@@ -192,6 +192,21 @@ export type SignupMutation = (
   ) }
 );
 
+export type ListQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type ListQuery = (
+  { __typename?: 'Query' }
+  & { list: Array<(
+    { __typename?: 'Recipe' }
+    & Pick<Recipe, 'id' | 'name' | 'createdAt'>
+    & { chef: (
+      { __typename?: 'User' }
+      & Pick<User, 'username' | 'name'>
+    ) }
+  )> }
+);
+
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -329,6 +344,44 @@ export function useSignupMutation(baseOptions?: Apollo.MutationHookOptions<Signu
 export type SignupMutationHookResult = ReturnType<typeof useSignupMutation>;
 export type SignupMutationResult = Apollo.MutationResult<SignupMutation>;
 export type SignupMutationOptions = Apollo.BaseMutationOptions<SignupMutation, SignupMutationVariables>;
+export const ListDocument = gql`
+    query List {
+  list {
+    id
+    name
+    createdAt
+    chef {
+      username
+      name
+    }
+  }
+}
+    `;
+
+/**
+ * __useListQuery__
+ *
+ * To run a query within a React component, call `useListQuery` and pass it any options that fit your needs.
+ * When your component renders, `useListQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useListQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useListQuery(baseOptions?: Apollo.QueryHookOptions<ListQuery, ListQueryVariables>) {
+        return Apollo.useQuery<ListQuery, ListQueryVariables>(ListDocument, baseOptions);
+      }
+export function useListLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ListQuery, ListQueryVariables>) {
+          return Apollo.useLazyQuery<ListQuery, ListQueryVariables>(ListDocument, baseOptions);
+        }
+export type ListQueryHookResult = ReturnType<typeof useListQuery>;
+export type ListLazyQueryHookResult = ReturnType<typeof useListLazyQuery>;
+export type ListQueryResult = Apollo.QueryResult<ListQuery, ListQueryVariables>;
 export const MeDocument = gql`
     query Me {
   me {

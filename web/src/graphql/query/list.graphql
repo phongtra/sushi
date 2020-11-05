@@ -1,0 +1,11 @@
+query List {
+  list {
+    id
+    name
+    createdAt
+    chef {
+      username
+      name
+    }
+  }
+}

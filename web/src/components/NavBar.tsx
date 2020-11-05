@@ -34,7 +34,7 @@ export const NavBar: React.FC = () => {
   } = useDisclosure();
   if (loading) {
   }
-  if (!data.me && !loading) {
+  if (!data?.me && !loading) {
     body = (
       <>
         <Button onClick={onLoginOpen} mr={4}>
@@ -43,9 +43,10 @@ export const NavBar: React.FC = () => {
         <Button onClick={onRegisterOpen}>Register</Button>
       </>
     );
-  } else if (data.me && !loading) {
+  } else {
     body = (
-      <>
+      <Flex align='center'>
+        <Box mr={4}> {data?.me?.username && <div>{data.me.username}</div>}</Box>
         <Button
           onClick={async () => {
             await logout();
@@ -55,7 +56,7 @@ export const NavBar: React.FC = () => {
         >
           Logout
         </Button>
-      </>
+      </Flex>
     );
   }
 
@@ -65,7 +66,6 @@ export const NavBar: React.FC = () => {
         <NextLink href='/'>
           <Link>
             <Heading>Sushi</Heading>
-            {data?.me?.username && <div>{data.me.username}</div>}
           </Link>
         </NextLink>
         <Box ml='auto'>{body}</Box>
