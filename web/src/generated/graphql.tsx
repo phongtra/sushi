@@ -218,6 +218,23 @@ export type MeQuery = (
   )> }
 );
 
+export type RecipeQueryVariables = Exact<{
+  id: Scalars['Int'];
+}>;
+
+
+export type RecipeQuery = (
+  { __typename?: 'Query' }
+  & { recipe?: Maybe<(
+    { __typename?: 'Recipe' }
+    & Pick<Recipe, 'name' | 'createdAt' | 'ingredients' | 'procedures'>
+    & { chef: (
+      { __typename?: 'User' }
+      & Pick<User, 'username' | 'name'>
+    ) }
+  )> }
+);
+
 
 export const LoginDocument = gql`
     mutation Login($usernameOrEmail: String!, $password: String!) {
@@ -414,3 +431,43 @@ export function useMeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MeQuery
 export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
 export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
+export const RecipeDocument = gql`
+    query Recipe($id: Int!) {
+  recipe(id: $id) {
+    name
+    createdAt
+    ingredients
+    procedures
+    chef {
+      username
+      name
+    }
+  }
+}
+    `;
+
+/**
+ * __useRecipeQuery__
+ *
+ * To run a query within a React component, call `useRecipeQuery` and pass it any options that fit your needs.
+ * When your component renders, `useRecipeQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useRecipeQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useRecipeQuery(baseOptions?: Apollo.QueryHookOptions<RecipeQuery, RecipeQueryVariables>) {
+        return Apollo.useQuery<RecipeQuery, RecipeQueryVariables>(RecipeDocument, baseOptions);
+      }
+export function useRecipeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<RecipeQuery, RecipeQueryVariables>) {
+          return Apollo.useLazyQuery<RecipeQuery, RecipeQueryVariables>(RecipeDocument, baseOptions);
+        }
+export type RecipeQueryHookResult = ReturnType<typeof useRecipeQuery>;
+export type RecipeLazyQueryHookResult = ReturnType<typeof useRecipeLazyQuery>;
+export type RecipeQueryResult = Apollo.QueryResult<RecipeQuery, RecipeQueryVariables>;
