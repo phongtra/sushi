@@ -140,6 +140,21 @@ export type FieldError = {
   message: Scalars['String'];
 };
 
+export type CreateRecipeMutationVariables = Exact<{
+  name: Scalars['String'];
+  ingredients: Array<Scalars['String']>;
+  procedures: Array<Scalars['String']>;
+}>;
+
+
+export type CreateRecipeMutation = (
+  { __typename?: 'Mutation' }
+  & { createRecipe: (
+    { __typename?: 'Recipe' }
+    & Pick<Recipe, 'name' | 'procedures' | 'ingredients' | 'chefId'>
+  ) }
+);
+
 export type LoginMutationVariables = Exact<{
   usernameOrEmail: Scalars['String'];
   password: Scalars['String'];
@@ -236,6 +251,43 @@ export type RecipeQuery = (
 );
 
 
+export const CreateRecipeDocument = gql`
+    mutation CreateRecipe($name: String!, $ingredients: [String!]!, $procedures: [String!]!) {
+  createRecipe(name: $name, ingredients: $ingredients, procedures: $procedures) {
+    name
+    procedures
+    ingredients
+    chefId
+  }
+}
+    `;
+export type CreateRecipeMutationFn = Apollo.MutationFunction<CreateRecipeMutation, CreateRecipeMutationVariables>;
+
+/**
+ * __useCreateRecipeMutation__
+ *
+ * To run a mutation, you first call `useCreateRecipeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateRecipeMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createRecipeMutation, { data, loading, error }] = useCreateRecipeMutation({
+ *   variables: {
+ *      name: // value for 'name'
+ *      ingredients: // value for 'ingredients'
+ *      procedures: // value for 'procedures'
+ *   },
+ * });
+ */
+export function useCreateRecipeMutation(baseOptions?: Apollo.MutationHookOptions<CreateRecipeMutation, CreateRecipeMutationVariables>) {
+        return Apollo.useMutation<CreateRecipeMutation, CreateRecipeMutationVariables>(CreateRecipeDocument, baseOptions);
+      }
+export type CreateRecipeMutationHookResult = ReturnType<typeof useCreateRecipeMutation>;
+export type CreateRecipeMutationResult = Apollo.MutationResult<CreateRecipeMutation>;
+export type CreateRecipeMutationOptions = Apollo.BaseMutationOptions<CreateRecipeMutation, CreateRecipeMutationVariables>;
 export const LoginDocument = gql`
     mutation Login($usernameOrEmail: String!, $password: String!) {
   signin(usernameOrEmail: $usernameOrEmail, password: $password) {

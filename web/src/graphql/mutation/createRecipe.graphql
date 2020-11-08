@@ -1,0 +1,17 @@
+mutation CreateRecipe(
+  $name: String!
+  $ingredients: [String!]!
+  $procedures: [String!]!
+) {
+  createRecipe(
+    name: $name
+    ingredients: $ingredients
+    procedures: $procedures
+  ) {
+    name
+    procedures
+    ingredients
+
+    chefId
+  }
+}
