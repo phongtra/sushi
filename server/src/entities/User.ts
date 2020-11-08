@@ -44,7 +44,7 @@ export class User extends BaseEntity {
 
   @Field(() => String, { nullable: true })
   @Column({ nullable: true })
-  dateOfBirth: Date;
+  dateOfBirth: String;
 
   @Field(() => String, { nullable: true })
   @Column({ nullable: true })

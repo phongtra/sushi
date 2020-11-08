@@ -17,6 +17,7 @@ import { Vote } from './entities/Vote';
 import { VoteResolver } from './resolvers/Vote';
 import { Comment } from './entities/Comment';
 import { CommentResolver } from './resolvers/Comment';
+import cors from 'cors';
 
 const app = express();
 
@@ -33,6 +34,13 @@ const main = async () => {
   await conn.runMigrations();
   const RedisStore = connectRedis(session);
   const redis = new Redis();
+  app.set('proxy', 1);
+  app.use(
+    cors({
+      origin: 'http://localhost:3000',
+      credentials: true
+    })
+  );
   app.use(
     session({
       name: 'qid',
@@ -45,8 +53,8 @@ const main = async () => {
         maxAge: 1000 * 60 * 60 * 24 * 365, //1 year
         httpOnly: true,
         sameSite: 'lax', //csrf
-        secure: __prod__, //cookie only works in https,
-        domain: __prod__ ? '.codeponder.com' : undefined
+        secure: __prod__ //cookie only works in https,
+        // domain: __prod__ ? '.codeponder.com' : undefined
       },
       secret: 'kdksfhdskfhdskfhdsfh',
       resave: false
@@ -65,7 +73,7 @@ const main = async () => {
     }),
     context: ({ req, res }) => ({ req, res, redis })
   });
-  apolloServer.applyMiddleware({ app });
+  apolloServer.applyMiddleware({ app, cors: false });
   app.listen(4000, () => {
     console.log('Listening on port 4000');
   });

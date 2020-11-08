@@ -81,6 +81,7 @@ export class UserResolver {
   }
   @Query(() => User, { nullable: true })
   me(@Ctx() { req }: Context) {
+    console.log(req.session);
     if (!req.session.userId) {
       return null;
     }
@@ -149,12 +150,13 @@ export class UserResolver {
         email,
         password: hashedPassword,
         name: name && name,
-        dateOfBirth: dateOfBirth && dateOfBirth,
+        dateOfBirth: dateOfBirth && Date.parse(dateOfBirth).toString(),
         gender: gender && gender
       })
       .returning('*')
       .execute();
     const user = result.raw[0] as User;
+    console.log(user);
     req.session.userId = user.id;
     return { user };
   }
