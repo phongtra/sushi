@@ -47,6 +47,11 @@ export const NavBar: React.FC = () => {
     body = (
       <Flex align='center'>
         <Box mr={4}> {data?.me?.username && <div>{data.me.username}</div>}</Box>
+        <Box mr={4}>
+          <NextLink href='/create-recipe'>
+            <Link>Create Recipe</Link>
+          </NextLink>
+        </Box>
         <Button
           onClick={async () => {
             await logout();
