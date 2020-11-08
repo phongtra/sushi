@@ -7,9 +7,11 @@ import {
   ListItem
 } from '@chakra-ui/core';
 import { Form, Formik } from 'formik';
+import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 import { InputField } from '../components/InputField';
 import { Layout } from '../components/Layout';
+import { useCreateRecipeMutation } from '../generated/graphql';
 import { useIsAuth } from '../utils/useIsAuth';
 import { withApollo } from '../utils/withApollo';
 
@@ -20,6 +22,8 @@ interface FormProps {
 const CreateRecipe = () => {
   const [ingredients, setIngredients] = useState<string[]>([]);
   const [procedures, setProcedures] = useState<string[]>([]);
+  const [createRecipe] = useCreateRecipeMutation();
+  const router = useRouter();
   useIsAuth();
   const initialValues: FormProps = {
     name: ''
@@ -30,9 +34,17 @@ const CreateRecipe = () => {
       <Formik
         initialValues={initialValues}
         onSubmit={async (values) => {
-          console.log(values.name);
-          console.log(ingredients);
-          console.log(procedures);
+          await createRecipe({
+            variables: {
+              name: values.name,
+              ingredients,
+              procedures
+            },
+            update: (cache) => {
+              cache.evict({ fieldName: 'recipes:{}' });
+            }
+          });
+          router.push('/');
         }}
       >
         {({ isSubmitting }) => (
@@ -64,8 +76,8 @@ const CreateRecipe = () => {
                         placeholder='1tbps of salt'
                         label='List of ingredients'
                       />
+                      <Button type='submit'>Add Ingredients</Button>
                     </FormControl>
-                    <Button type='submit'>Add Ingredients</Button>
                   </Form>
                 </Formik>
               </Box>
@@ -89,6 +101,7 @@ const CreateRecipe = () => {
                         placeholder='Preheat 180 degree oven'
                         label='List of procedures'
                       />
+                      <Button type='submit'>Add Procedures</Button>
                     </FormControl>
                   </Form>
                 </Formik>
