@@ -1,9 +1,18 @@
-import { Box, Heading, List, ListItem, Text } from '@chakra-ui/core';
+import {
+  Box,
+  Button,
+  Heading,
+  Link,
+  List,
+  ListItem,
+  Text
+} from '@chakra-ui/core';
 import { withApollo } from '../../utils/withApollo';
 import { useRouter } from 'next/router';
 import { Layout } from '../../components/Layout';
 import { useRecipeQuery } from '../../generated/graphql';
-
+import NextLink from 'next/link';
+import React from 'react';
 const Recipe = () => {
   const router = useRouter();
   const intId =
@@ -38,6 +47,12 @@ const Recipe = () => {
               <ListItem key={prod}>{prod}</ListItem>
             ))}
           </List>
+          <NextLink
+            href='/recipes/edit/[id]'
+            as={`/recipes/edit/${data.recipe.id}`}
+          >
+            <Button as={Link}>Edit Recipe</Button>
+          </NextLink>
         </>
       )}
     </Layout>

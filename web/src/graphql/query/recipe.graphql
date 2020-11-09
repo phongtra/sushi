@@ -1,5 +1,6 @@
 query Recipe($id: Int!) {
   recipe(id: $id) {
+    id
     name
     createdAt
     ingredients
