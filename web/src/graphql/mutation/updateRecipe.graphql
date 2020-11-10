@@ -1,16 +1,19 @@
 mutation UpdateRecipe(
   $id: Int!
   $name: String!
+  $image: Upload
   $ingredients: [String!]!
   $procedures: [String!]!
 ) {
   updateRecipe(
     id: $id
     name: $name
+    image: $image
     ingredients: $ingredients
     procedures: $procedures
   ) {
     id
+    image
     name
     procedures
     ingredients
