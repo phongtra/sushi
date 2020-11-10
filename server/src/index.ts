@@ -18,6 +18,7 @@ import { VoteResolver } from './resolvers/Vote';
 import { Comment } from './entities/Comment';
 import { CommentResolver } from './resolvers/Comment';
 import cors from 'cors';
+import { googleStorageConnect } from './utils/googleCloudStorageConnect';
 
 const app = express();
 
@@ -32,6 +33,8 @@ const main = async () => {
   });
 
   await conn.runMigrations();
+
+  googleStorageConnect.connect();
   const RedisStore = connectRedis(session);
   const redis = new Redis();
   app.set('proxy', 1);
