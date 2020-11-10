@@ -1,17 +1,7 @@
-import {
-  Box,
-  Button,
-  FormControl,
-  Heading,
-  List,
-  ListItem
-} from '@chakra-ui/core';
-import { Form, Formik } from 'formik';
-import { useRouter } from 'next/router';
+import { Heading } from '@chakra-ui/core';
 import React, { useState } from 'react';
-import { InputField } from '../components/InputField';
 import { Layout } from '../components/Layout';
-import { useCreateRecipeMutation } from '../generated/graphql';
+import { RecipeForm } from '../components/RecipeForm';
 import { useIsAuth } from '../utils/useIsAuth';
 import { withApollo } from '../utils/withApollo';
 
@@ -22,8 +12,6 @@ interface FormProps {
 const CreateRecipe = () => {
   const [ingredients, setIngredients] = useState<string[]>([]);
   const [procedures, setProcedures] = useState<string[]>([]);
-  const [createRecipe] = useCreateRecipeMutation();
-  const router = useRouter();
   useIsAuth();
   const initialValues: FormProps = {
     name: ''
@@ -31,100 +19,14 @@ const CreateRecipe = () => {
   return (
     <Layout>
       <Heading>Create Your Stunning Recipe</Heading>
-      <Formik
+      <RecipeForm
         initialValues={initialValues}
-        onSubmit={async (values) => {
-          await createRecipe({
-            variables: {
-              name: values.name,
-              ingredients,
-              procedures
-            },
-            update: (cache) => {
-              cache.evict({ fieldName: 'recipes:{}' });
-            }
-          });
-          router.push('/');
-        }}
-      >
-        {({ isSubmitting }) => (
-          <Form>
-            <FormControl>
-              <InputField
-                name='name'
-                placeholder='Recipe Name'
-                label='Recipe Name'
-              />
-              <Box mt={4}>
-                <List styleType='disc'>
-                  {ingredients.length &&
-                    ingredients.map((ing) => {
-                      return <ListItem key={ing}>{ing}</ListItem>;
-                    })}
-                </List>
-                <Formik
-                  initialValues={{ ingredients: '' }}
-                  onSubmit={(values) => {
-                    console.log('submitting', values);
-                    setIngredients([...ingredients, values.ingredients]);
-                  }}
-                >
-                  <Form>
-                    <FormControl>
-                      <InputField
-                        name='ingredients'
-                        placeholder='1tbps of salt'
-                        label='List of ingredients'
-                      />
-                      <Button type='submit'>Add Ingredients</Button>
-                    </FormControl>
-                  </Form>
-                </Formik>
-              </Box>
-              <Box mt={4}>
-                <List styleType='disc'>
-                  {procedures.length &&
-                    procedures.map((prod) => {
-                      return <ListItem key={prod}>{prod}</ListItem>;
-                    })}
-                </List>
-                <Formik
-                  initialValues={{ procedures: '' }}
-                  onSubmit={(values) => {
-                    setProcedures([...procedures, values.procedures]);
-                  }}
-                >
-                  <Form>
-                    <FormControl>
-                      <InputField
-                        name='procedures'
-                        placeholder='Preheat 180 degree oven'
-                        label='List of procedures'
-                      />
-                      <Button type='submit'>Add Procedures</Button>
-                    </FormControl>
-                  </Form>
-                </Formik>
-              </Box>
-              {/* <Flex mt={2}>
-                     <NextLink href='/forget-password'>
-                       <Link ml='auto'>forgot password</Link>
-                     </NextLink>
-                   </Flex>
-      */}
-              <Button
-                type='submit'
-                variantColor='teal'
-                mt={4}
-                isLoading={isSubmitting}
-              >
-                Login
-              </Button>
-              {/* <FormErrorMessage>{form.errors.name}</FormErrorMessage> */}
-            </FormControl>
-          </Form>
-        )}
-      </Formik>
+        formType='create-recipe'
+        ingredients={ingredients}
+        setIngredients={setIngredients}
+        procedures={procedures}
+        setProcedures={setProcedures}
+      />
     </Layout>
   );
 };

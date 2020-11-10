@@ -207,6 +207,22 @@ export type SignupMutation = (
   ) }
 );
 
+export type UpdateRecipeMutationVariables = Exact<{
+  id: Scalars['Int'];
+  name: Scalars['String'];
+  ingredients: Array<Scalars['String']>;
+  procedures: Array<Scalars['String']>;
+}>;
+
+
+export type UpdateRecipeMutation = (
+  { __typename?: 'Mutation' }
+  & { updateRecipe?: Maybe<(
+    { __typename?: 'Recipe' }
+    & Pick<Recipe, 'id' | 'name' | 'procedures' | 'ingredients' | 'updatedAt'>
+  )> }
+);
+
 export type ListQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -242,7 +258,7 @@ export type RecipeQuery = (
   { __typename?: 'Query' }
   & { recipe?: Maybe<(
     { __typename?: 'Recipe' }
-    & Pick<Recipe, 'name' | 'createdAt' | 'ingredients' | 'procedures'>
+    & Pick<Recipe, 'id' | 'name' | 'createdAt' | 'ingredients' | 'procedures'>
     & { chef: (
       { __typename?: 'User' }
       & Pick<User, 'username' | 'name'>
@@ -413,6 +429,50 @@ export function useSignupMutation(baseOptions?: Apollo.MutationHookOptions<Signu
 export type SignupMutationHookResult = ReturnType<typeof useSignupMutation>;
 export type SignupMutationResult = Apollo.MutationResult<SignupMutation>;
 export type SignupMutationOptions = Apollo.BaseMutationOptions<SignupMutation, SignupMutationVariables>;
+export const UpdateRecipeDocument = gql`
+    mutation UpdateRecipe($id: Int!, $name: String!, $ingredients: [String!]!, $procedures: [String!]!) {
+  updateRecipe(
+    id: $id
+    name: $name
+    ingredients: $ingredients
+    procedures: $procedures
+  ) {
+    id
+    name
+    procedures
+    ingredients
+    updatedAt
+  }
+}
+    `;
+export type UpdateRecipeMutationFn = Apollo.MutationFunction<UpdateRecipeMutation, UpdateRecipeMutationVariables>;
+
+/**
+ * __useUpdateRecipeMutation__
+ *
+ * To run a mutation, you first call `useUpdateRecipeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateRecipeMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateRecipeMutation, { data, loading, error }] = useUpdateRecipeMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      name: // value for 'name'
+ *      ingredients: // value for 'ingredients'
+ *      procedures: // value for 'procedures'
+ *   },
+ * });
+ */
+export function useUpdateRecipeMutation(baseOptions?: Apollo.MutationHookOptions<UpdateRecipeMutation, UpdateRecipeMutationVariables>) {
+        return Apollo.useMutation<UpdateRecipeMutation, UpdateRecipeMutationVariables>(UpdateRecipeDocument, baseOptions);
+      }
+export type UpdateRecipeMutationHookResult = ReturnType<typeof useUpdateRecipeMutation>;
+export type UpdateRecipeMutationResult = Apollo.MutationResult<UpdateRecipeMutation>;
+export type UpdateRecipeMutationOptions = Apollo.BaseMutationOptions<UpdateRecipeMutation, UpdateRecipeMutationVariables>;
 export const ListDocument = gql`
     query List {
   list {
@@ -486,6 +546,7 @@ export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
 export const RecipeDocument = gql`
     query Recipe($id: Int!) {
   recipe(id: $id) {
+    id
     name
     createdAt
     ingredients

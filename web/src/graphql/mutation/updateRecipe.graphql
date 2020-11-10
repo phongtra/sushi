@@ -1,0 +1,19 @@
+mutation UpdateRecipe(
+  $id: Int!
+  $name: String!
+  $ingredients: [String!]!
+  $procedures: [String!]!
+) {
+  updateRecipe(
+    id: $id
+    name: $name
+    ingredients: $ingredients
+    procedures: $procedures
+  ) {
+    id
+    name
+    procedures
+    ingredients
+    updatedAt
+  }
+}
