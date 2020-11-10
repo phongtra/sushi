@@ -24,6 +24,10 @@ export class Recipe extends BaseEntity {
   @Field()
   name!: string;
 
+  @Column({ nullable: true, default: '' })
+  @Field()
+  image: string;
+
   @Column('text', { array: true })
   @Field(() => [String])
   ingredients!: string[];

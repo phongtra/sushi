@@ -1,12 +1,14 @@
+import React, { useState } from 'react';
 import { FormControl, Box, List, ListItem, Button } from '@chakra-ui/core';
 import { Form, Formik } from 'formik';
 import { useRouter } from 'next/router';
-import React from 'react';
+
 import {
   useCreateRecipeMutation,
   useUpdateRecipeMutation
 } from '../generated/graphql';
 import { InputField } from './InputField';
+import Dropzone from 'react-dropzone';
 
 interface RecipeFormProps {
   initialValues: {
@@ -17,7 +19,7 @@ interface RecipeFormProps {
   setIngredients: (option: string[]) => void;
   procedures: string[];
   setProcedures: (option: string[]) => void;
-  id: number;
+  id?: number;
 }
 
 export const RecipeForm: React.FC<RecipeFormProps> = ({
@@ -30,6 +32,8 @@ export const RecipeForm: React.FC<RecipeFormProps> = ({
   id
 }) => {
   const router = useRouter();
+  const [image, setImage] = useState<File>();
+
   let recipeMutation;
   if (formType === 'create-recipe') {
     recipeMutation = useCreateRecipeMutation;
@@ -41,9 +45,11 @@ export const RecipeForm: React.FC<RecipeFormProps> = ({
     <Formik
       initialValues={initialValues}
       onSubmit={async (values) => {
+        console.log(image);
         await recipeFunction({
           variables: {
             [formType === 'edit-recipe' && 'id']: id,
+            image: image && image,
             name: values.name,
             ingredients,
             procedures
@@ -115,6 +121,24 @@ export const RecipeForm: React.FC<RecipeFormProps> = ({
                   </FormControl>
                 </Form>
               </Formik>
+            </Box>
+            <Box mt={4}>
+              <Dropzone
+                accept='image/jpeg, image/png'
+                multiple={false}
+                onDrop={([file]) => setImage(file)}
+              >
+                {({ getRootProps, getInputProps }) => (
+                  <section>
+                    <div {...getRootProps()}>
+                      <input {...getInputProps()} />
+                      <p>
+                        Drag 'n' drop some files here, or click to select files
+                      </p>
+                    </div>
+                  </section>
+                )}
+              </Dropzone>
             </Box>
             {/* <Flex mt={2}>
                      <NextLink href='/forget-password'>

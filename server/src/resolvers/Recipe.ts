@@ -11,6 +11,9 @@ import {
   UseMiddleware
 } from 'type-graphql';
 import { getConnection } from 'typeorm';
+import { GraphQLUpload, FileUpload } from 'graphql-upload';
+
+import { googleStorageConnect } from '../utils/googleCloudStorageConnect';
 
 @Resolver()
 export class RecipeResolver {
@@ -37,14 +40,38 @@ export class RecipeResolver {
   }
   @UseMiddleware(isAuth)
   @Mutation(() => Recipe)
-  createRecipe(
+  async createRecipe(
     @Arg('name', () => String) name: string,
     @Arg('ingredients', () => [String]) ingredients: string[],
+    @Arg('image', () => GraphQLUpload, { nullable: true }) image: FileUpload,
     @Arg('procedures', () => [String]) procedures: string[],
     @Ctx() { req }: Context
   ) {
+    console.log(image);
+    if (image) {
+      console.log('Processing image');
+      const { createReadStream, filename } = await image;
+      await new Promise((res) => {
+        createReadStream()
+          .pipe(
+            googleStorageConnect.bucket
+              .file(filename)
+              .createWriteStream({ resumable: false, gzip: true })
+          )
+          .on('finish', res);
+      });
+      console.log('finish');
+      return Recipe.create({
+        name,
+        image: filename,
+        ingredients,
+        procedures,
+        chefId: req.session.userId
+      }).save();
+    }
     return Recipe.create({
       name,
+      image: '',
       ingredients,
       procedures,
       chefId: req.session.userId

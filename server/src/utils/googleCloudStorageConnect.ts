@@ -14,7 +14,6 @@ class GoogleStorageConnect {
     if (!this.gc) {
       throw new Error('There is no google cloud storage connection');
     }
-    console.log('yes');
     const recipeImages = this.gc.bucket('recipes-images1');
     return recipeImages;
   }

@@ -2,6 +2,7 @@ query List {
   list {
     id
     name
+    image
     createdAt
     chef {
       username

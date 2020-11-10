@@ -1,14 +1,17 @@
 mutation CreateRecipe(
   $name: String!
+  $image: Upload
   $ingredients: [String!]!
   $procedures: [String!]!
 ) {
   createRecipe(
     name: $name
+    image: $image
     ingredients: $ingredients
     procedures: $procedures
   ) {
     name
+    image
     procedures
     ingredients
 

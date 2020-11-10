@@ -19,6 +19,7 @@ import { Comment } from './entities/Comment';
 import { CommentResolver } from './resolvers/Comment';
 import cors from 'cors';
 import { googleStorageConnect } from './utils/googleCloudStorageConnect';
+import { graphqlUploadExpress } from 'graphql-upload';
 
 const app = express();
 
@@ -33,8 +34,8 @@ const main = async () => {
   });
 
   await conn.runMigrations();
-
-  googleStorageConnect.connect();
+  await Recipe.delete({});
+  await googleStorageConnect.connect();
   const RedisStore = connectRedis(session);
   const redis = new Redis();
   app.set('proxy', 1);
@@ -63,6 +64,7 @@ const main = async () => {
       resave: false
     })
   );
+  app.use(graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 10 }));
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
       resolvers: [
@@ -74,6 +76,7 @@ const main = async () => {
       ],
       validate: false
     }),
+    uploads: false,
     context: ({ req, res }) => ({ req, res, redis })
   });
   apolloServer.applyMiddleware({ app, cors: false });

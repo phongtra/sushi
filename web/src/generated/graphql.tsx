@@ -9,6 +9,8 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  /** The `Upload` scalar type represents a file upload. */
+  Upload: any;
 };
 
 export type Query = {
@@ -40,6 +42,7 @@ export type Recipe = {
   __typename?: 'Recipe';
   id: Scalars['Float'];
   name: Scalars['String'];
+  image: Scalars['String'];
   ingredients: Array<Scalars['String']>;
   createdAt: Scalars['String'];
   updatedAt: Scalars['String'];
@@ -100,6 +103,7 @@ export type MutationSigninArgs = {
 
 export type MutationCreateRecipeArgs = {
   procedures: Array<Scalars['String']>;
+  image?: Maybe<Scalars['Upload']>;
   ingredients: Array<Scalars['String']>;
   name: Scalars['String'];
 };
@@ -140,8 +144,10 @@ export type FieldError = {
   message: Scalars['String'];
 };
 
+
 export type CreateRecipeMutationVariables = Exact<{
   name: Scalars['String'];
+  image?: Maybe<Scalars['Upload']>;
   ingredients: Array<Scalars['String']>;
   procedures: Array<Scalars['String']>;
 }>;
@@ -151,7 +157,7 @@ export type CreateRecipeMutation = (
   { __typename?: 'Mutation' }
   & { createRecipe: (
     { __typename?: 'Recipe' }
-    & Pick<Recipe, 'name' | 'procedures' | 'ingredients' | 'chefId'>
+    & Pick<Recipe, 'name' | 'image' | 'procedures' | 'ingredients' | 'chefId'>
   ) }
 );
 
@@ -230,7 +236,7 @@ export type ListQuery = (
   { __typename?: 'Query' }
   & { list: Array<(
     { __typename?: 'Recipe' }
-    & Pick<Recipe, 'id' | 'name' | 'createdAt'>
+    & Pick<Recipe, 'id' | 'name' | 'image' | 'createdAt'>
     & { chef: (
       { __typename?: 'User' }
       & Pick<User, 'username' | 'name'>
@@ -258,7 +264,7 @@ export type RecipeQuery = (
   { __typename?: 'Query' }
   & { recipe?: Maybe<(
     { __typename?: 'Recipe' }
-    & Pick<Recipe, 'id' | 'name' | 'createdAt' | 'ingredients' | 'procedures'>
+    & Pick<Recipe, 'id' | 'name' | 'image' | 'createdAt' | 'ingredients' | 'procedures'>
     & { chef: (
       { __typename?: 'User' }
       & Pick<User, 'username' | 'name'>
@@ -268,9 +274,15 @@ export type RecipeQuery = (
 
 
 export const CreateRecipeDocument = gql`
-    mutation CreateRecipe($name: String!, $ingredients: [String!]!, $procedures: [String!]!) {
-  createRecipe(name: $name, ingredients: $ingredients, procedures: $procedures) {
+    mutation CreateRecipe($name: String!, $image: Upload, $ingredients: [String!]!, $procedures: [String!]!) {
+  createRecipe(
+    name: $name
+    image: $image
+    ingredients: $ingredients
+    procedures: $procedures
+  ) {
     name
+    image
     procedures
     ingredients
     chefId
@@ -293,6 +305,7 @@ export type CreateRecipeMutationFn = Apollo.MutationFunction<CreateRecipeMutatio
  * const [createRecipeMutation, { data, loading, error }] = useCreateRecipeMutation({
  *   variables: {
  *      name: // value for 'name'
+ *      image: // value for 'image'
  *      ingredients: // value for 'ingredients'
  *      procedures: // value for 'procedures'
  *   },
@@ -478,6 +491,7 @@ export const ListDocument = gql`
   list {
     id
     name
+    image
     createdAt
     chef {
       username
@@ -548,6 +562,7 @@ export const RecipeDocument = gql`
   recipe(id: $id) {
     id
     name
+    image
     createdAt
     ingredients
     procedures

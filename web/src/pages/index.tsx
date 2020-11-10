@@ -1,4 +1,4 @@
-import { Box, Flex, Heading, Link, Stack, Text } from '@chakra-ui/core';
+import { Box, Flex, Heading, Image, Link, Stack, Text } from '@chakra-ui/core';
 import NextLink from 'next/link';
 import React from 'react';
 import { Layout } from '../components/Layout';
@@ -25,6 +25,9 @@ const Index = () => {
               recipe && (
                 <Flex key={recipe.id} p={5} shadow='md' borderWidth='1px'>
                   <Box flex={1}>
+                    <Image
+                      src={`https://storage.googleapis.com/recipes-images1/${recipe.image}`}
+                    />
                     <NextLink href='/recipes/[id]' as={`/recipes/${recipe.id}`}>
                       <Link>
                         <Heading>{recipe.name}</Heading>

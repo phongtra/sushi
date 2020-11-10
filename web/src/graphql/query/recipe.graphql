@@ -2,6 +2,7 @@ query Recipe($id: Int!) {
   recipe(id: $id) {
     id
     name
+    image
     createdAt
     ingredients
     procedures
