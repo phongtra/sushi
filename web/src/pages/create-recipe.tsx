@@ -1,7 +1,7 @@
 import { Heading } from '@chakra-ui/core';
 import React, { useState } from 'react';
 import { Layout } from '../components/Layout';
-import { useCreateRecipeMutation } from '../generated/graphql';
+import { ListDocument, useCreateRecipeMutation } from '../generated/graphql';
 import { useIsAuth } from '../utils/useIsAuth';
 import { withApollo } from '../utils/withApollo';
 import { FormControl, Box, List, ListItem, Button } from '@chakra-ui/core';
@@ -37,9 +37,11 @@ const CreateRecipe = () => {
               ingredients,
               procedures
             },
-            update: (cache) => {
-              cache.evict({ fieldName: 'recipes:{}' });
-            }
+            refetchQueries: [{ query: ListDocument }]
+            // update: (cache) => {
+            //   cache.gc();
+            //   // cache.evict({ fieldName: 'recipes:{}' });
+            // }
           });
           router.push('/');
         }}
