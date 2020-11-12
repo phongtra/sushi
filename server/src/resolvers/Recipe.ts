@@ -10,7 +10,7 @@ import {
   Resolver,
   UseMiddleware
 } from 'type-graphql';
-import { getConnection } from 'typeorm';
+import { getConnection, UpdateResult } from 'typeorm';
 import { GraphQLUpload, FileUpload } from 'graphql-upload';
 
 import { googleStorageConnect } from '../utils/googleCloudStorageConnect';
@@ -83,20 +83,58 @@ export class RecipeResolver {
   async updateRecipe(
     @Arg('id', () => Int) id: number,
     @Arg('name', () => String) name: string,
-    @Arg('ingredients', () => [String]) ingredients: string[],
-    @Arg('procedures', () => [String]) procedures: string[],
+    @Arg('ingredients', () => [String], { nullable: true })
+    ingredients: string[],
+    @Arg('procedures', () => [String], { nullable: true }) procedures: string[],
     @Ctx() { req }: Context
   ) {
-    const result = await getConnection()
-      .createQueryBuilder()
-      .update(Recipe)
-      .set({ name, ingredients, procedures })
-      .where('id = :id and "chefId" = :chefId', {
-        id,
-        chefId: req.session.userId
-      })
-      .returning('*')
-      .execute();
+    let result: UpdateResult;
+
+    if (!ingredients.length && !procedures.length) {
+      result = await getConnection()
+        .createQueryBuilder()
+        .update(Recipe)
+        .set({ name })
+        .where('id = :id and "chefId" = :chefId', {
+          id,
+          chefId: req.session.userId
+        })
+        .returning('*')
+        .execute();
+    } else if (!ingredients.length) {
+      result = await getConnection()
+        .createQueryBuilder()
+        .update(Recipe)
+        .set({ name, procedures })
+        .where('id = :id and "chefId" = :chefId', {
+          id,
+          chefId: req.session.userId
+        })
+        .returning('*')
+        .execute();
+    } else if (!procedures.length) {
+      result = await getConnection()
+        .createQueryBuilder()
+        .update(Recipe)
+        .set({ name, ingredients })
+        .where('id = :id and "chefId" = :chefId', {
+          id,
+          chefId: req.session.userId
+        })
+        .returning('*')
+        .execute();
+    } else {
+      result = await getConnection()
+        .createQueryBuilder()
+        .update(Recipe)
+        .set({ name, ingredients, procedures })
+        .where('id = :id and "chefId" = :chefId', {
+          id,
+          chefId: req.session.userId
+        })
+        .returning('*')
+        .execute();
+    }
     return result.raw[0] as Recipe;
   }
   @Mutation(() => Boolean)
